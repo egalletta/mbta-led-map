@@ -1,3 +1,6 @@
+# Represents the shift register pin at which each stop's LED
+# is plugged into
+
 blue = {
 "Bowdoin" : 8,
 "Government Center" : 9,
