@@ -66,10 +66,10 @@ def main():
     while True:
         # get southbound trains
         write_serial_message("Updating...", display)
-        clear_lights(blue_lightboard, red_lightboard)
         blue_train_positions = get_vehicles(line="Blue", direction=0)
         orange_train_positions = get_vehicles(line="Orange", direction=0)
         red_train_positions = get_vehicles(line="Red", direction=0)
+        clear_lights(blue_lightboard, red_lightboard)
         write_serial_message(message="b" + blue_train_positions, serial_device=blue_lightboard)
         time.sleep(0.6)
         write_serial_message(message="r" + red_train_positions, serial_device=red_lightboard)
@@ -80,10 +80,10 @@ def main():
         time.sleep(8)
         # get northbound trains
         write_serial_message("Updating...", display)
-        clear_lights(blue_lightboard, red_lightboard)
         blue_train_positions = get_vehicles(line="Blue", direction=1)
         orange_train_positions = get_vehicles(line="Orange", direction=1)
         red_train_positions = get_vehicles(line="Red", direction=1)
+        clear_lights(blue_lightboard, red_lightboard)
         write_serial_message(message="b" + blue_train_positions, serial_device=blue_lightboard)
         time.sleep(.6)
         write_serial_message(message="r" + red_train_positions, serial_device=red_lightboard)
@@ -103,6 +103,7 @@ def clear_lights(blue_lightboard, red_lightboard):
     time.sleep(0.6)
     write_serial_message(message="o" + "000000000000000000000000000000000000000000000000000",
                          serial_device=blue_lightboard)
+    time.sleep(0.6)
 
 
 if __name__ == '__main__':
