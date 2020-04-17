@@ -46,8 +46,13 @@ def get_vehicles(line, direction):
     current_positions, stop_dict = populate_stops(line)
     for vehicle in vehicles:
         if (vehicle['attributes']['direction_id'] == direction):
-            print(get_stop_name(str(vehicle['relationships']['stop']['data']['id'])))
-            current_positions[stop_dict[get_stop_name(str(vehicle['relationships']['stop']['data']['id']))]] = True
+            try:
+                print(get_stop_name(str(vehicle['relationships']['stop']['data']['id'])))
+                current_positions[stop_dict[get_stop_name(str(vehicle['relationships']['stop']['data']['id']))]] = True
+            except TypeError:
+                print("Type Error: " + vehicle)
+
+
     return convert(current_positions)
 
 
