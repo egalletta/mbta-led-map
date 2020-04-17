@@ -1,13 +1,17 @@
 import time
+
 import requests
 import serial
+
 import config
 import stops
+from utils.stops import get_stop_name
 
 MBTA_KEY = config.api_key
 blue_stops = stops.blue
 orange_stops = stops.orange
 red_stops = stops.red
+
 def populate_stops(line):
     if (line == "Blue"):
         current_positions = [False] * 12
@@ -26,35 +30,23 @@ def write_serial_message(message, serial_device):
 
 
 def convert(list):
-    res = ""
+    result = ""
     for item in list:
         if item is True:
-            res = res + "1"
+            result = result + "1"
         else:
-            res = res + "0"
-    return res
+            result = result + "0"
+    return result
 
 def get_vehicles(line, direction):
     # api-endpoint
     URL = "https://api-v3.mbta.com/vehicles?filter[route]=" + line + "&api_key=" + MBTA_KEY
-    # headers = {'x-api-key': 'vMcznyeweEOs4AcHomvwpw'}
-    # sending get request and saving the response as response object
-    r = requests.get(url=URL)
-    # extracting data in json format
-    mbta_data = r.json()
-    print(mbta_data)
-    vehicles = mbta_data['data']
+    vehicles = requests.get(url=URL).json()['data']
     #populating stops
     current_positions, stop_dict = populate_stops(line)
     for vehicle in vehicles:
         if (vehicle['attributes']['direction_id'] == direction):
-            place_URL = "https://api-v3.mbta.com/stops/" + str(vehicle['relationships']['stop']['data']['id']) \
-                        + "?api_key=" + MBTA_KEY
-            place_req = requests.get(place_URL)
-            place_data = place_req.json()
-            place_data = place_data['data']
-            print(place_data['attributes']['name'])
-            current_positions[stop_dict[place_data['attributes']['name']]] = True
+            current_positions[stop_dict[get_stop_name(str(vehicle['relationships']['stop']['data']['id']))]] = True
     return convert(current_positions)
 
 
