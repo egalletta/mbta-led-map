@@ -24,5 +24,15 @@ def get_stop_name(id):
                 return stop['attributes']['name']
 
 
+def get_line(line):
+    if not path.exists("stops.json"):
+        main()
+    with open("stops.json", "r") as stops_json:
+        stops = json.load(stops_json)
+        for stop in stops:
+            if stop['id'] == id:
+                return stop['attributes']['name']
+
+
 if __name__ == '__main__':
     main()
