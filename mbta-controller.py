@@ -52,9 +52,9 @@ def get_vehicles(line, direction):
 
 def main():
     # set up the boards with their respective serial ports
-    blue_lightboard = serial.Serial('/dev/ttyUSB0', '9600')
-    red_lightboard = serial.Serial('/dev/ttyUSB1', '9600')
-    display = serial.Serial('/dev/ttyUSB2', '9600')
+    blue_lightboard = serial.Serial('/dev/ttyUSB0', '115200')
+    red_lightboard = serial.Serial('/dev/ttyUSB1', '115200')
+    display = serial.Serial('/dev/ttyUSB2', '115200')
     while True:
         # get southbound trains
         write_serial_message("Updating...", display)
@@ -62,14 +62,12 @@ def main():
         orange_train_positions = get_vehicles(line="Orange", direction=0)
         red_train_positions = get_vehicles(line="Red", direction=0)
         clear_lights(blue_lightboard, red_lightboard)
-        time.sleep(1)
         write_serial_message(message="b" + blue_train_positions, serial_device=blue_lightboard)
         time.sleep(0.6)
         write_serial_message(message="r" + red_train_positions, serial_device=red_lightboard)
         time.sleep(0.6)
         write_serial_message(message="o" + orange_train_positions, serial_device=blue_lightboard)
         write_serial_message("Trains SOUTHBOUND", display)
-        print(orange_train_positions)
         time.sleep(8)
         # get northbound trains
         write_serial_message("Updating...", display)
@@ -77,13 +75,13 @@ def main():
         orange_train_positions = get_vehicles(line="Orange", direction=1)
         red_train_positions = get_vehicles(line="Red", direction=1)
         clear_lights(blue_lightboard, red_lightboard)
+        time.sleep(0.6)
         write_serial_message(message="b" + blue_train_positions, serial_device=blue_lightboard)
         time.sleep(.6)
         write_serial_message(message="r" + red_train_positions, serial_device=red_lightboard)
         time.sleep(.6)
         write_serial_message(message="o" + orange_train_positions, serial_device=blue_lightboard)
         write_serial_message("Trains NORTHBOUND", display)
-        print(orange_train_positions)
         time.sleep(8)
 
 

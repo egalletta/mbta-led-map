@@ -11,7 +11,7 @@ void setup() {
   reg_red.setBitCount(24);
   reg_red.setPins(11, 12, 8);
   
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 // the loop function runs over and over again forever
