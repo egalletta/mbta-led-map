@@ -18,10 +18,7 @@ def populate_stops(line):
         stop_dict = stops.orange
     elif (line == "Red"):
         current_positions = [False] * 22
-        stop_dict = stops.red
-    elif ("Green" in line):
-        current_positions = [False] * 75
-        stop_dict = stops.green
+        stop_dict = red_stops
     return current_positions, stop_dict
 
 
