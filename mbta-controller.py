@@ -18,10 +18,7 @@ def populate_stops(line):
         stop_dict = stops.orange
     elif (line == "Red"):
         current_positions = [False] * 22
-        stop_dict = stops.red
-    elif ("Green" in line):
-        current_positions = [False] * 72
-        stop_dict = stops.green
+        stop_dict = red_stops
     return current_positions, stop_dict
 
 
@@ -46,6 +43,7 @@ def get_vehicles(line, direction):
     current_positions, stop_dict = populate_stops(line)
     for vehicle in vehicles:
         if (vehicle['attributes']['direction_id'] == direction):
+            print(get_stop_name(str(vehicle['relationships']['stop']['data']['id'])))
             current_positions[stop_dict[get_stop_name(str(vehicle['relationships']['stop']['data']['id']))]] = True
     return convert(current_positions)
 
