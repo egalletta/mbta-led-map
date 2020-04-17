@@ -14,7 +14,7 @@ void setup() {
   reg_blue.setPins(11, 12, 8);
   reg_orange.setBitCount(24);
   reg_orange.setPins(3, 4, 2);
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop() {
