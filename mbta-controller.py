@@ -50,7 +50,7 @@ def get_vehicles(line, direction):
                 print(get_stop_name(str(vehicle['relationships']['stop']['data']['id'])))
                 current_positions[stop_dict[get_stop_name(str(vehicle['relationships']['stop']['data']['id']))]] = True
             except TypeError:
-                print("Type Error: " + vehicle)
+                print(vehicle)
 
 
     return convert(current_positions)
@@ -69,7 +69,6 @@ def main():
         orange_train_positions = get_vehicles(line="Orange", direction=0)
         red_train_positions = get_vehicles(line="Red", direction=0)
         green_train_positions = get_vehicles(line="Green-E,Green-B,Green-C,Green-D", direction=0)
-        clear_lights(blue_lightboard, red_lightboard, green_lightboard)
         time.sleep(0.6)
         write_serial_message(message="b" + blue_train_positions, serial_device=blue_lightboard)
         time.sleep(0.6)
@@ -85,7 +84,6 @@ def main():
         orange_train_positions = get_vehicles(line="Orange", direction=1)
         red_train_positions = get_vehicles(line="Red", direction=1)
         green_train_positions = get_vehicles(line="Green-E,Green-B,Green-C,Green-D", direction=1)
-        clear_lights(blue_lightboard, red_lightboard)
         time.sleep(0.6)
         write_serial_message(message="b" + blue_train_positions, serial_device=blue_lightboard)
         time.sleep(.6)
