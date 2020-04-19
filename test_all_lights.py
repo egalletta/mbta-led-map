@@ -19,7 +19,7 @@ def main():
     mbta.write_serial_message("r111111111111111111111111111111111111111111111111111111111111111111111111",
                               red_lightboard)
     time.sleep(2)
-    mbta.write_serial_message("b111111111111111111111111111111111111111111111111111111111111111111111111",
+    mbta.write_serial_message("g111111111111111111111111111111111111111111111111111111111111111111111111",
                               green_lightboard)
 
 if __name__ == '__main__':
