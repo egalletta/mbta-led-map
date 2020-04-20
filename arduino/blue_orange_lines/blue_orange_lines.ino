@@ -23,6 +23,7 @@ void loop() {
   while(Serial.available() > 0 ){
     String str = Serial.readString();
     if (str.substring(0,1) == "b") { // blue line LEDs
+      clear_lights(reg_blue);
       // turn on or off the appropriate LEDs hooked up to the shift register
       reg_blue.batchWriteBegin();
       for (int i = 1; i <= NUM_BLUE_STATIONS; i++) {
@@ -36,6 +37,7 @@ void loop() {
       reg_blue.batchWriteEnd();
     }
     else if (str.substring(0,1) == "o") { // orange line LEDs
+      clear_lights(reg_orange);
       reg_orange.batchWriteBegin();
       for (int i = 1; i <= NUM_ORANGE_STATIONS; i++) {
         if (str.substring(i, i+1) == "1") {
@@ -47,5 +49,11 @@ void loop() {
       }
       reg_orange.batchWriteEnd();
     }
+  }
+}
+
+void clear_lights(Shifty reg) {
+  for (int i = 0; i < NUM_BLUE_STATIONS; i++) {
+    reg.writeBit(i, LOW);
   }
 }

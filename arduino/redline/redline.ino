@@ -21,6 +21,7 @@ void loop() {
   while(Serial.available() > 0 ){
     String str = Serial.readString();
     if (str.substring(0,1) == "r") {
+      clear_lights();
       reg_red.batchWriteBegin();
       for (int i = 1; i <= NUM_red_STATIONS; i++) {
         if (str.substring(i, i+1) == "1") {
@@ -32,5 +33,11 @@ void loop() {
       }
       reg_red.batchWriteEnd();
     }
+  }
+}
+
+void clear_lights() {
+  for (int i = 0; i < NUM_red_STATIONS; i++) {
+    reg_red.writeBit(i, LOW);
   }
 }
