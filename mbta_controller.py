@@ -1,10 +1,11 @@
+import argparse
 import time
 
 import requests
 import serial
 
 import config
-import stops
+import stop_pins
 from utils.stops import get_stop_name
 
 MBTA_KEY = config.api_key
@@ -12,16 +13,16 @@ MBTA_KEY = config.api_key
 def populate_stops(line):
     if (line == "Blue"):
         current_positions = [False] * 12
-        stop_dict = stops.blue
+        stop_dict = stop_pins.blue
     elif (line == "Orange"):
         current_positions = [False] * 20
-        stop_dict = stops.orange
+        stop_dict = stop_pins.orange
     elif (line == "Red"):
         current_positions = [False] * 22
-        stop_dict = stops.red
+        stop_dict = stop_pins.red
     elif ("Green" in line):
         current_positions = [False] * 75
-        stop_dict = stops.green
+        stop_dict = stop_pins.green
     return current_positions, stop_dict
 
 
@@ -56,42 +57,47 @@ def get_vehicles(line, direction):
 
 
 def main():
+    # parse arguments for displaying
+    parser = argparse.ArgumentParser(description="Options for trains:")
+    parser.add_argument('--north', '-n', action='store_true', help="Display trains going northbound")
+    parser.add_argument('--south', '-s', action='store_true', help="Display trains going southbound")
+    parser.add_argument('--red', '-r', action='store_true', help="Show red line trains")
+    parser.add_argument('--green', '-g', action='store_true', help="Show green line trains")
+    parser.add_argument('--orange', '-o', action='store_true', help="Show orange line trains")
+    parser.add_argument('--blue', '-b', action='store_true', help="Show blue line trains")
+    args = parser.parse_args()
     # set up the boards with their respective serial ports
     blue_lightboard = serial.Serial('/dev/ttyUSB0', '115200')
     red_lightboard = serial.Serial('/dev/ttyUSB1', '115200')
     green_lightboard = serial.Serial('/dev/ttyUSB2', '115200')
     display = serial.Serial('/dev/ttyUSB3', '115200')
     while True:
-        # get southbound trains
-        write_serial_message("Trains NORTHBOUND   Updating...", display)
-        blue_train_positions = get_vehicles(line="Blue", direction=0)
-        orange_train_positions = get_vehicles(line="Orange", direction=0)
-        red_train_positions = get_vehicles(line="Red", direction=0)
-        green_train_positions = get_vehicles(line="Green-E,Green-B,Green-C,Green-D", direction=0)
-        time.sleep(0.6)
+        if args.south:
+            display_lights(blue_lightboard, display, green_lightboard, red_lightboard, 0, "SOUTHBOUND", args)
+        if args.north:
+            display_lights(blue_lightboard, display, green_lightboard, red_lightboard, 1, "NORTHBOUND", args)
+
+
+def display_lights(blue_lightboard, display, green_lightboard, red_lightboard, direction_id, text, args):
+    # get southbound trains
+    write_serial_message("Updating...", display)
+    time.sleep(0.6)
+    if args.blue:
+        blue_train_positions = get_vehicles(line="Blue", direction=direction_id)
         write_serial_message(message="b" + blue_train_positions, serial_device=blue_lightboard)
-        time.sleep(0.6)
+    time.sleep(0.6)
+    if args.red:
+        red_train_positions = get_vehicles(line="Red", direction=direction_id)
         write_serial_message(message="r" + red_train_positions, serial_device=red_lightboard)
+    if args.green:
+        green_train_positions = get_vehicles(line="Green-E,Green-B,Green-C,Green-D", direction=direction_id)
         write_serial_message(message="g" + green_train_positions, serial_device=green_lightboard)
-        time.sleep(0.6)
+    time.sleep(0.6)
+    if args.orange:
+        orange_train_positions = get_vehicles(line="Orange", direction=direction_id)
         write_serial_message(message="o" + orange_train_positions, serial_device=blue_lightboard)
-        write_serial_message("Trains SOUTHBOUND", display)
-        time.sleep(8)
-        # get northbound trains
-        write_serial_message("Trains SOUTHBOUND   Updating...", display)
-        blue_train_positions = get_vehicles(line="Blue", direction=1)
-        orange_train_positions = get_vehicles(line="Orange", direction=1)
-        red_train_positions = get_vehicles(line="Red", direction=1)
-        green_train_positions = get_vehicles(line="Green-E,Green-B,Green-C,Green-D", direction=1)
-        time.sleep(0.6)
-        write_serial_message(message="b" + blue_train_positions, serial_device=blue_lightboard)
-        time.sleep(.6)
-        write_serial_message(message="r" + red_train_positions, serial_device=red_lightboard)
-        write_serial_message(message="g" + green_train_positions, serial_device=green_lightboard)
-        time.sleep(.6)
-        write_serial_message(message="o" + orange_train_positions, serial_device=blue_lightboard)
-        write_serial_message("Trains NORTHBOUND", display)
-        time.sleep(8)
+    write_serial_message("Trains " + text, display)
+    time.sleep(8)
 
 
 def clear_lights(blue_lightboard, red_lightboard, green_lightboard):
